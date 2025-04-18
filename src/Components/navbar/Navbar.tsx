@@ -49,6 +49,7 @@ function Navbar() {
     { key: "nutritionMeals", label: <a href="/nutritionMeals"><UsergroupAddOutlined />Nutrition Meals</a> },
     { key: "workoutExercises", label: <a href="/workoutExercises"><FileDoneOutlined />Workout Exercises</a> },
     { key: "workout", label: <a href="/workout"><AppstoreOutlined />Workout</a> },
+    { key: "reports", label: <a href="/reports"><AppstoreOutlined />Reports</a> },
     { key: "logOut", label: <button onClick={() => { logOut(); navigate('/'); }}><LoginOutlined />Cerrar Sesión</button> }, // Redirigir a inicio
   ];
 

@@ -16,6 +16,7 @@ import NutritionPlansScreen from './Components/screens/nutritionMealsScreen/Nutr
 import WorkoutExercisesScreen from './Components/screens/workoutExercisesScreen/WorkoutExercisesScreen';
 import LoginScreen from './Components/screens/loginScreen/LoginScreen';
 import WorkoutScreen from './Components/screens/workoutScreen/WorkoutScreen';
+import ReportsScreen from './Components/screens/reportsScreen/ReportsScreen';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,6 +28,7 @@ const router = createBrowserRouter(
       <Route path="workoutExercises" element={<WorkoutExercisesScreen />} />
       <Route path="login"             element={<LoginScreen />} />
       <Route path="workout"          element={<WorkoutScreen />} />
+      <Route path="reports"          element={<ReportsScreen />} />
     </Route>
   )
 );

@@ -22,6 +22,10 @@
         "destination": "/index.html"
       },
       {
+        "source": "/reports",
+        "destination": "/index.html"
+      },
+      {
         "source": "/",
         "destination": "/index.html"
       },

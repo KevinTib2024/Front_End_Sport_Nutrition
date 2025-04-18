@@ -4,69 +4,61 @@ import { Button, Input, message, Modal } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../../../assets/lib/zod/validations";
-import { useAuth } from "../../../Context/AuthContext"; // Importa el contexto
-import './LoginScreen.css';
+import { useAuth, User } from "../../../Context/AuthContext";
+import "./LoginScreen.css";
 import myApi from "../../../assets/lib/axios/miApi";
 import { useNavigate } from "react-router-dom";
-import RegisterForm from "./RegisterForm";  // Importa el formulario de registro
+import RegisterForm from "./RegisterForm";
 
 interface IloginForm {
   email: string;
   password: string;
 }
 
+interface LoginResponse {
+  userId: number;
+  email: string;
+  userTypeId: number;
+  // …otros campos si los hay
+}
+
 const LoginScreen: React.FC = () => {
-  const { login } = useAuth(); // Usa el contexto de autenticación
-  const { control, handleSubmit, formState: { errors } } = useForm<IloginForm>({
+  const { login } = useAuth();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IloginForm>({
     defaultValues: { email: "", password: "" },
     resolver: zodResolver(loginSchema),
   });
-  const [isModalVisible, setIsModalVisible] = useState(false);  // Estado para controlar el modal
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const navigate = useNavigate();
 
-  // Realiza la autenticación del usuario
-  const validatedLogin = async (formLogin: IloginForm) => {
+  const validatedLogin = async (formLogin: IloginForm): Promise<LoginResponse | null> => {
     try {
-      const response = await myApi.post("/login", formLogin); // Llamada al backend
-      console.log("Respuesta del backend:", response.data); // Imprime la respuesta completa
-      return response.data; // Retorna todos los detalles del usuario
-    } catch (error) {
-      console.log(error);
-      return null; // Si la autenticación falla
+      const response = await myApi.post<LoginResponse>("/login", formLogin);
+      return response.data;
+    } catch {
+      return null;
     }
   };
-  
 
-  // Maneja el inicio de sesión
   const handleLogin = async (formLogin: IloginForm) => {
     const userData = await validatedLogin(formLogin);
-
     if (!userData) {
-      message.error("Credenciales Invalidas");
+      message.error("Credenciales inválidas");
       return;
     }
 
-    const user = {
+    const user: User = {
+      id: userData.userId,
       email: userData.email,
-      userType: userData.userTypeId,  // Cambia `user_Type_Id` a `userTypeId`
+      userType: userData.userTypeId,
     };
-    
 
-    console.log("userType asignado desde el backend:", user.userType);
-
-    // Guardar el usuario y tipo de usuario en el contexto
     login(user);
-    // Navegar a la página principal
     navigate("/");
-  };
-
-  // Mostrar el modal de registro
-  const handleRegister = () => {
-    setIsModalVisible(true);  // Muestra el modal
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);  // Cierra el modal
   };
 
   return (
@@ -76,6 +68,7 @@ const LoginScreen: React.FC = () => {
           <UserOutlined className="user-icon" /> Bienvenido
         </h2>
         <p className="subtitle">Inicia sesión en tu cuenta</p>
+
         <form onSubmit={handleSubmit(handleLogin)}>
           <div className="input-group">
             <label htmlFor="email">
@@ -88,8 +81,9 @@ const LoginScreen: React.FC = () => {
                 <Input {...field} placeholder="pedroelcapito@gmail.com" />
               )}
             />
-            {errors.email ? <p>{errors.email.message}</p> : null}
+            {errors.email && <p>{errors.email.message}</p>}
           </div>
+
           <div className="input-group">
             <label htmlFor="password">
               <LockOutlined className="icon" /> Contraseña
@@ -101,14 +95,20 @@ const LoginScreen: React.FC = () => {
                 <Input.Password {...field} placeholder="*****" />
               )}
             />
-            {errors.password ? <p>{errors.password.message}</p> : null}
+            {errors.password && <p>{errors.password.message}</p>}
           </div>
+
           <Button type="primary" htmlType="submit" className="login-button">
             Ingresar
           </Button>
         </form>
+
         <p className="register-text">¿No tienes cuenta?</p>
-        <Button type="link" onClick={handleRegister} className="register-button">
+        <Button
+          type="link"
+          onClick={() => setIsModalVisible(true)}
+          className="register-button"
+        >
           Registrarse
         </Button>
       </div>
@@ -117,10 +117,11 @@ const LoginScreen: React.FC = () => {
       <Modal
         title="Registrarse"
         open={isModalVisible}
-        onCancel={handleCancel}
+        onCancel={() => setIsModalVisible(false)}
         footer={null}
+        className="register-modal"
       >
-        <RegisterForm />  {/* Aquí se renderiza el formulario de registro */}
+        <RegisterForm />
       </Modal>
     </div>
   );
