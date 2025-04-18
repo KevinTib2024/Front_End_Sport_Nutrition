@@ -1,0 +1,34 @@
+{
+    "version": 2,
+    "rewrites": [
+      {
+        "source": "/exercises",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/meals",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/nutritionMeals",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/workoutExercises",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/workout",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/(.*)",
+        "destination": "/index.html"
+      }
+    ]
+  }
+  
