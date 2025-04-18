@@ -1,0 +1,53 @@
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Cambiado a min-height para permitir que crezca */
+}
+
+header {
+  height: 60px; 
+  background: #f0f0f0; /* Fondo gris claro para visualizar mejor */
+}
+
+main {
+  flex: 1; /* Permite que main ocupe el espacio restante */
+  overflow-y: auto; /* Permite el desplazamiento vertical si el contenido excede la altura */
+}
+
+footer {
+  text-align: center;
+  padding: 10px;
+  background-color: #f0f0f0;
+}
+
+/* Posicionamiento fijo en la parte superior derecha */
+.icon-container {
+  position: fixed; /* Fija el contenedor de iconos en la pantalla */
+  top: 20px; /* Ubica el contenedor en la parte superior */
+  right: 20px; /* Ubica el contenedor en la esquina derecha */
+  display: flex;
+  gap: 15px;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10; /* Asegura que el contenedor de iconos quede por encima de otros elementos */
+}
+
+/* Estilo de los iconos individuales */
+.icon {
+  font-size: 24px;
+  color: #4c8bf5;
+  cursor: pointer;
+  transition: transform 0.3s, color 0.3s;
+}
+
+.icon:hover {
+  transform: scale(1.2);
+  color: #1c6dd0;
+}

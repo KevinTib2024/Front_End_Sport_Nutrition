@@ -1,0 +1,246 @@
+/* Contenedor principal */
+.home-screen {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Contenedor de bienvenida */
+  .welcome-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url('https://substackcdn.com/image/fetch/w_520,h_272,c_fill,f_auto,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F716b9b7b-637f-4a98-bb2a-74a5c2a98adf_609x363.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    min-height: 60vh;
+    opacity: 0;
+    animation: fadeIn 1.5s ease-out forwards;
+  }
+  
+  /* Fondo de overlay */
+  .welcome-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+  }
+  
+  /* Título de bienvenida */
+  .welcome-title {
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeInUp 0.6s forwards;
+    animation-delay: 0.2s;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Subtítulo */
+  .welcome-subtitle {
+    font-size: 1.5em;
+    margin: 20px 0;
+    font-weight: 300;
+    color: #f0f0f0;
+  }
+  
+  /* Botón de llamada a la acción */
+  .explore-button {
+    font-size: 1.2em;
+    color: #333;
+    background-color: #ffd700;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+  
+  .explore-button:hover {
+    background-color: #e6b800;
+    transform: scale(1.05);
+  }
+  
+  /* Título de sección */
+  .title {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  /* Contenedor de las tarjetas de salas */
+  .workout-rooms-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 20px;
+  }
+  
+  /* Estilos de las tarjetas individuales */
+  .workout-room-card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .workout-room-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Imagen de la sala de arte con efecto de zoom en hover */
+  .workout-room-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .workout-room-card:hover .art-room-image {
+    transform: scale(1.1);
+  }
+  
+  /* Contenedor de la información de la sala */
+  .workout-room-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  /* Título de la sala de arte con icono */
+  .workout-room-title {
+    font-size: 1.4em;
+    color: #333;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    margin-bottom: 8px;
+    transition: color 0.3s ease;
+  }
+  
+  /* Efecto en el icono con rotación */
+  .workout-room-title svg {
+    color: #4c8bf5;
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .workout-room-card:hover .art-room-title svg {
+    color: #ffd700;
+    transform: rotate(20deg);
+  }
+  
+  /* Descripción de la sala de arte */
+  .workout-room-description {
+    font-size: 1em;
+    color: #666;
+    line-height: 1.5;
+  }
+  
+  /* Contenedor de resumen de la sala */
+  .workout-room-summary {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    max-width: 600px;
+  }
+  
+  /* Fondo de la ventana emergente */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(96, 96, 96, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  /* Contenido de la ventana emergente */
+  .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 80%;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+  
+  /* Botón de cerrar la ventana emergente con efecto de latido */
+  .close-modal {
+    background-color: #ffd700;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+    animation: heartbeat 1.5s infinite;
+  }
+  
+  .close-modal:hover {
+    background-color: #e6b800;
+  }
+  
+  @keyframes heartbeat {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+  

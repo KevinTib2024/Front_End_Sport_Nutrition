@@ -1,0 +1,28 @@
+.ant-menu {
+    background-color: #fff; /* Fondo blanco */
+    border: none; /* Sin borde */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra del menú */
+  }
+  
+  .ant-menu-item {
+    color: #333; /* Color del texto */
+    font-weight: bold; /* Texto en negrita */
+    transition: transform 0.3s, box-shadow 0.3s; /* Transición para el efecto de flote */
+  }
+  
+  .ant-menu-item:hover {
+    transform: translateY(-3px); /* Eleva la pestaña al pasar el mouse */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra más intensa al flotar */
+    color: #1890ff; /* Color del texto al pasar el mouse */
+  }
+  
+  .ant-menu-item a {
+    text-decoration: none; /* Sin subrayado en los enlaces */
+    display: flex; /* Para alinear icono y texto */
+    align-items: center; /* Centrar verticalmente */
+  }
+  
+  .ant-menu-item svg {
+    margin-right: 8px; /* Espaciado entre el ícono y el texto */
+  }
+  
