@@ -24,7 +24,7 @@ function AppContent() {
         {user && (
           <div style={{ marginTop: "1rem" }}>
             <MailtoButton
-              to="soporte@tudominio.com"
+              to="sportnutrition184@gmail.com"
               subject="Consulta desde Sportt Nutrition"
               body="Hola, necesito ayuda con..."
             />
