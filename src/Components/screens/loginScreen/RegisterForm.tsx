@@ -241,8 +241,63 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
         </Button>
       </Form.Item>
 
-      <Modal title="Términos y Condiciones" open={termsModalVisible} footer={null} onCancel={() => setTermsModalVisible(false)} width={700}>
-        {/* Contenido de términos aquí */}
+      <Modal 
+        title="Términos y Condiciones"
+        open={termsModalVisible} 
+        footer={null} 
+        onCancel={() => setTermsModalVisible(false)} 
+        width={700}>
+        
+        <div style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+          <h3>Política de Privacidad</h3>
+          <p><strong>1. Introducción</strong></p>
+          <p>La sitio web Sport Nutrition de Colombia se compromete a proteger la privacidad y la seguridad de los datos personales de nuestros usuarios, visitantes y participantes. Estos términos y condiciones explican cómo recopilamos, utilizamos y protegemos sus datos personales de conformidad con la Ley 1581 de 2012 y demás normativas vigentes sobre protección de datos personales en Colombia.</p>
+
+          <p><strong>2. Responsable del Tratamiento de Datos</strong></p>
+          <p>El responsable del tratamiento de los datos personales es Sport Nutrition de Colombia, ubicado en [Chia], y con contacto a través del correo electrónico [sportnutrition184@gmail.com].</p>
+
+          <p><strong>3. Finalidad del Tratamiento de Datos</strong></p>
+          <p>Los datos personales que recopilamos serán utilizados con las siguientes finalidades:</p>
+          <ul>
+            <li>Registro de visitantes: Para llevar un control de los visitantes y participantes en actividades del SportNutrition.</li>
+            <li>Comunicación: Para enviar información sobre actividades, eventos y exposiciones futuras del SportNutrition, así como boletines informativos.</li>
+            <li>Evaluación de la experiencia: Para recibir comentarios y sugerencias que nos permitan mejorar nuestros servicios y la experiencia de los visitantes.</li>
+            <li>Cumplimiento legal: Para cumplir con obligaciones legales y normativas relacionadas con la operación del SportNutrition.</li>
+          </ul>
+
+          <p><strong>4. Tipos de Datos Recopilados</strong></p>
+          <ul>
+            <li>Datos de contacto: Nombre, correo electrónico, número de teléfono, dirección, etc.</li>
+            <li>Datos de identificación: Tipo de documento de identidad, número de documento, etc.</li>
+            <li>Datos de actividad en SportNutrition: Información sobre las visitas, participación en eventos, y preferencias relacionadas con las actividades de SportNutrition.</li>
+            <li>Datos sensibles (si aplica): En caso de que SportNutrition reciba datos sensibles, como información sobre discapacidad, se solicitará el consentimiento expreso para su tratamiento.</li>
+          </ul>
+
+          <p><strong>5. Derechos de los Titulares de los Datos</strong></p>
+          <ul>
+            <li>Acceder: A sus datos personales de forma gratuita y obtener información sobre cómo se están utilizando.</li>
+            <li>Rectificar y actualizar: Sus datos personales cuando estos sean inexactos o estén desactualizados.</li>
+            <li>Suprimir: Sus datos personales en caso de que ya no sean necesarios para las finalidades del tratamiento.</li>
+            <li>Revocar la autorización: Para el tratamiento de sus datos personales en cualquier momento, sin efectos retroactivos.</li>
+            <li>Oponerse: Al tratamiento de sus datos en los casos previstos por la ley.</li>
+          </ul>
+
+          <p><strong>6. Autorización del Titular</strong></p>
+          <p>Al ingresar SportNutrition, inscribirse en nuestras actividades o interactuar con nuestros servicios, los usuarios dan su consentimiento expreso para el tratamiento de sus datos personales, conforme a los términos expuestos en este documento.</p>
+
+          <p><strong>7. Modificaciones a la Política de Privacidad</strong></p>
+          <p>ESportNutrition se reserva el derecho de modificar esta política de privacidad en cualquier momento. Las modificaciones serán publicadas en el sitio web oficial y estarán disponibles para consulta por los usuarios.</p>
+
+          <p><strong>8. Contacto</strong></p>
+          <p>Si tiene alguna duda, comentario o solicitud sobre el tratamiento de sus datos personales, puede contactar SportNutrition de Colombia a través del correo electrónico [sportnutrition184@gmail.com].</p>
+
+          <div style={{ marginTop: '20px' }}>
+            <Checkbox>
+              Acepto los términos y condiciones
+            </Checkbox>
+          </div>
+        </div>
+
       </Modal>
     </Form>
   );
