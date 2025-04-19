@@ -20,8 +20,14 @@ const { Option } = Select;
 interface Gender { genderId: number; gender: string }
 interface IdentificationType { identificationTypeId: number; identification_Type: string }
 interface UserType { userTypeId: number; userType: string }
+interface Workout { workoutId: number; name: string }
+interface NutritionPlan { nutritionPlansId: number; name: string }
 
-const RegisterForm: React.FC = () => {
+interface RegisterFormProps {
+  onSuccess?: () => void;
+}
+
+const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
   const [form] = Form.useForm();
   const [termsModalVisible, setTermsModalVisible] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -29,8 +35,11 @@ const RegisterForm: React.FC = () => {
   const [genders, setGenders] = useState<Gender[]>([]);
   const [identificationTypes, setIdentificationTypes] = useState<IdentificationType[]>([]);
   const [userTypes, setUserTypes] = useState<UserType[]>([]);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [nutritionPlans, setNutritionPlans] = useState<NutritionPlan[]>([]);
 
   useEffect(() => {
+    // Carga de datos para selects
     axios.get<Gender[]>('https://sportnutrition.somee.com/api/Gender')
       .then(r => setGenders(r.data))
       .catch(() => message.error('Error al cargar los géneros'));
@@ -42,6 +51,15 @@ const RegisterForm: React.FC = () => {
     axios.get<UserType[]>('https://sportnutrition.somee.com/api/UserType')
       .then(r => setUserTypes(r.data))
       .catch(() => message.error('Error al cargar tipos de usuario'));
+
+    // Carga de rutinas y planes nutricionales
+    axios.get<Workout[]>('https://sportnutrition.somee.com/api/Workout')
+      .then(r => setWorkouts(r.data))
+      .catch(() => message.error('Error al cargar rutinas'));
+
+    axios.get<NutritionPlan[]>('https://sportnutrition.somee.com/api/NutritionPlans')
+      .then(r => setNutritionPlans(r.data))
+      .catch(() => message.error('Error al cargar planes nutricionales'));
   }, []);
 
   const onFinish = async (values: any) => {
@@ -80,6 +98,7 @@ const RegisterForm: React.FC = () => {
       message.success('Registro exitoso');
       form.resetFields();
       setAcceptedTerms(false);
+      onSuccess?.();
     } catch (err: any) {
       if (err instanceof ZodError) {
         const fields = err.issues.map(issue => ({
@@ -102,7 +121,7 @@ const RegisterForm: React.FC = () => {
       onFinish={onFinish}
       layout="vertical"
       className="register-form"
-      initialValues={{ workout_Id: 0, nutritionPlans_Id: 0, height: 0, weight: 0 }}
+      initialValues={{ workout_Id: undefined, nutritionPlans_Id: undefined, height: 0, weight: 0 }}
     >
       <Form.Item label="Nombres" name="nombres" rules={[{ required: true, message: 'Por favor ingrese sus nombres' }]}
       >
@@ -180,14 +199,22 @@ const RegisterForm: React.FC = () => {
         <Input />
       </Form.Item>
 
-      <Form.Item label="ID Rutina" name="workout_Id" rules={[{ required: true, message: 'Requerido' }]}
+      <Form.Item label="Rutina" name="workout_Id" rules={[{ required: true, message: 'Seleccione una rutina' }]}
       >
-        <InputNumber style={{ width: '100%' }} min={0} />
+        <Select placeholder="Seleccione rutina">
+          {workouts.map(w => (
+            <Option key={w.workoutId} value={w.workoutId}>{w.name}</Option>
+          ))}
+        </Select>
       </Form.Item>
 
-      <Form.Item label="ID Plan Nutricional" name="nutritionPlans_Id" rules={[{ required: true, message: 'Requerido' }]}
+      <Form.Item label="Plan Nutricional" name="nutritionPlans_Id" rules={[{ required: true, message: 'Seleccione un plan nutricional' }]}
       >
-        <InputNumber style={{ width: '100%' }} min={0} />
+        <Select placeholder="Seleccione plan nutricional">
+          {nutritionPlans.map(n => (
+            <Option key={n.nutritionPlansId} value={n.nutritionPlansId}>{n.name}</Option>
+          ))}
+        </Select>
       </Form.Item>
 
       <Form.Item label="Altura (cm)" name="height" rules={[{ required: true, message: 'Requerido' }]}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Input,
@@ -13,8 +13,13 @@ import {
 } from "antd";
 import useWorkoutExercises, { WorkoutExercise } from "../../../hooks/useWorkoutExercises";
 import { useAuth } from "../../../Context/AuthContext";
+import axios from "axios";
 
-const WorkoutExercisesTable = () => {
+// Interfaces para rutinas y ejercicios con nombre
+interface Workout { workoutId: number; name: string; }
+interface Exercise { exercisesId: number; name: string; }
+
+const WorkoutExercisesTable: React.FC = () => {
   const {
     workoutExercises,
     loading,
@@ -25,43 +30,65 @@ const WorkoutExercisesTable = () => {
   } = useWorkoutExercises();
   const { state } = useAuth();
 
+  // Datos maestros
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+
+  // Cargar nombres de rutinas y ejercicios
+  useEffect(() => {
+    (async () => {
+      try {
+        const [wRes, eRes] = await Promise.all([
+          axios.get<Workout[]>("https://sportnutrition.somee.com/api/Workout"),
+          axios.get<Exercise[]>("https://sportnutrition.somee.com/api/Exercises"),
+        ]);
+        setWorkouts(wRes.data);
+        setExercises(eRes.data);
+      } catch (err: any) {
+        console.error("Error cargando rutinas o ejercicios:", err);
+        message.error("Error cargando datos de rutinas y ejercicios");
+      }
+    })();
+  }, []);
+
+  // Estados y formularios
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm<WorkoutExercise>();
   const [editingItem, setEditingItem] = useState<WorkoutExercise | null>(null);
 
+  // Filtrado básico
   const filtered = workoutExercises.filter((we) =>
     `${we.workout_Id}-${we.exercises_Id}`.includes(searchText.trim())
   );
 
+  // Modales
   const showModal = () => {
     setIsEditing(false);
     setEditingItem(null);
     form.resetFields();
     setIsModalOpen(true);
   };
-
   const showEditModal = (item: WorkoutExercise) => {
     setIsEditing(true);
     setEditingItem(item);
     form.setFieldsValue(item);
     setIsModalOpen(true);
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingItem(null);
     form.resetFields();
   };
 
+  // Crear o actualizar
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       const success = isEditing && editingItem
         ? await updateWorkoutExercise({ ...editingItem, ...values })
         : await createWorkoutExercise(values as Omit<WorkoutExercise, "workoutExercisesId">);
-
       if (success) {
         message.success(isEditing ? "Ejercicio actualizado." : "Ejercicio agregado.");
         closeModal();
@@ -73,27 +100,36 @@ const WorkoutExercisesTable = () => {
     }
   };
 
+  // Eliminar
   const handleDelete = async (id: number) => {
     const success = await deleteWorkoutExercise(id);
-    if (success) {
-      message.success("Ejercicio eliminado.");
-    } else {
-      message.error("No se pudo eliminar.");
-    }
+    if (success) message.success("Ejercicio eliminado.");
+    else message.error("No se pudo eliminar.");
   };
 
   const canEdit = [1, 5].includes(state.user?.userType ?? 0);
 
+  // Columnas con nombres en lugar de IDs
   const columns = [
-    { title: "Workout ID", dataIndex: "workout_Id", key: "workout_Id" },
-    { title: "Exercise ID", dataIndex: "exercises_Id", key: "exercises_Id" },
+    {
+      title: "Rutina",
+      key: "workoutName",
+      render: (_: any, record: WorkoutExercise) => {
+        const w = workouts.find((w) => w.workoutId === record.workout_Id);
+        return w?.name ?? record.workout_Id;
+      },
+    },
+    {
+      title: "Ejercicio",
+      key: "exerciseName",
+      render: (_: any, record: WorkoutExercise) => {
+        const e = exercises.find((e) => e.exercisesId === record.exercises_Id);
+        return e?.name ?? record.exercises_Id;
+      },
+    },
     { title: "Series", dataIndex: "sets", key: "sets" },
     { title: "Repeticiones", dataIndex: "reps", key: "reps" },
-    {
-      title: "Descanso (s)",
-      dataIndex: "restSeconds",
-      key: "restSeconds",
-    },
+    { title: "Descanso (s)", dataIndex: "restSeconds", key: "restSeconds" },
     {
       title: "Acciones",
       key: "actions",
@@ -156,14 +192,14 @@ const WorkoutExercisesTable = () => {
         <Form form={form} layout="vertical">
           <Form.Item
             name="workout_Id"
-            label="ID de Rutina"
+            label="Rutina"
             rules={[{ required: true, message: "Obligatorio" }]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             name="exercises_Id"
-            label="ID de Ejercicio"
+            label="Ejercicio"
             rules={[{ required: true, message: "Obligatorio" }]}
           >
             <InputNumber style={{ width: "100%" }} />
