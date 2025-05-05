@@ -41,7 +41,7 @@ const workoutRooms: WorkoutRoom[] = [
 
 const workoutRoomImages = [
   { nombre: "Visión", image: "https://wallpapersok.com/images/hd/fitness-muscular-man-rear-shot-o7hjg0p7g1afqd8t.jpg" },
-  { nombre: "Misión", image: "https://e0.pxfuel.com/wallpapers/447/748/desktop-wallpaper-14-fitness-hp-background-ultra-gym-gym-workout.jpg" },
+  { nombre: "Misión", image: "https://cdn.forbes.com.mx/2020/03/sport-2264825_1920-2-640x360.jpg" },
   { nombre: "Introducción", image: "https://c4.wallpaperflare.com/wallpaper/878/351/642/muscles-pose-back-arms-wallpaper-thumb.jpg" },
   { nombre: "Historia", image: "https://wallpapercave.com/wp/wp5885948.jpg" },
 ];
