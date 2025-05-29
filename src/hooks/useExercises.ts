@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // Define el tipo que esperas de la API
 export type ExerciseType = {
-  exerciseId: number;
+  exercisesId: number;
   name: string;
   description: string;
   muscleGroup: string;
@@ -33,36 +33,39 @@ const useExercises = () => {
     };
     fetchData();
   }, []);
-// hooks/useExercises.ts
 
-// 1) Ajusta createExercise:
-const createExercise = async (
+  // 2. Crear un ejercicio
+  const createExercise = async (
     exercise: Omit<ExerciseType, 'exerciseId'>
   ): Promise<boolean> => {
     try {
-      const resp = await axios.post<ExerciseType>(BASE_URL, exercise, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const resp = await axios.post<ExerciseType>(
+        BASE_URL,
+        exercise,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
       setExercises(prev => [...prev, resp.data]);
-      return true;                             // <— DEVUELVE true
+      return true;
     } catch (err) {
       setError('Error al crear el ejercicio');
       console.error('Error al crear el ejercicio:', err);
-      return false;                            // <— DEVUELVE false
+      return false;
     }
   };
-  
-  // 2) Ajusta updateExercise:
+
+  // 3. Actualizar un ejercicio existente
   const updateExercise = async (
     exercise: ExerciseType
   ): Promise<boolean> => {
     try {
-      await axios.put(BASE_URL, exercise, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      await axios.put(
+        BASE_URL,
+        exercise,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
       setExercises(prev =>
         prev.map(ex =>
-          ex.exerciseId === exercise.exerciseId ? exercise : ex
+          ex.exercisesId === exercise.exercisesId ? exercise : ex
         )
       );
       return true;
@@ -72,12 +75,12 @@ const createExercise = async (
       return false;
     }
   };
-  
-  // 3) Ajusta deleteExercise:
+
+  // 4. Eliminar un ejercicio
   const deleteExercise = async (exerciseId: number): Promise<boolean> => {
     try {
       await axios.delete(`${BASE_URL}/${exerciseId}`);
-      setExercises(prev => prev.filter(ex => ex.exerciseId !== exerciseId));
+      setExercises(prev => prev.filter(ex => ex.exercisesId !== exerciseId));
       return true;
     } catch (err) {
       setError('Error al eliminar el ejercicio');
@@ -85,8 +88,7 @@ const createExercise = async (
       return false;
     }
   };
-  
-  // Y asegúrate de exportar estas funciones:
+
   return {
     exercises,
     loading,
@@ -95,6 +97,6 @@ const createExercise = async (
     updateExercise,
     deleteExercise,
   };
-}  
+};
 
 export default useExercises;

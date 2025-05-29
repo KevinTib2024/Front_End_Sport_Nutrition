@@ -1,170 +1,183 @@
-import { useState } from "react";
-import { Table, Input, Button, Popconfirm, message, Modal, Form } from "antd";
-import useExercises from "../../../hooks/useExercises";
-import { useAuth } from "../../../Context/AuthContext";
+// src/screens/ExercisesScreen.tsx
+import React, { useState } from 'react';
+import {
+  List,
+  Card,
+  Button,
+  Spin,
+  Alert,
+  Modal,
+  Form,
+  Input,
+  Popconfirm,
+  message
+} from 'antd';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusOutlined
+} from '@ant-design/icons';
+import useExercises, { ExerciseType } from '../../../hooks/useExercises';
 
-export interface Exercise {
-  exerciseId: number;
-  name: string;
-  description: string;
-  muscleGroup: string;
-}
+import { exerciseImages } from '../../../utils/exerciseImages';
+import { useAuth } from '../../../Context/AuthContext';
 
-const ExerciseTable = () => {
-  const { exercises, deleteExercise, updateExercise, createExercise } = useExercises();
+const ExercisesScreen: React.FC = () => {
+  const {
+    exercises,
+    loading,
+    error,
+    createExercise,
+    updateExercise,
+    deleteExercise
+  } = useExercises();
   const { state } = useAuth();
-  const [searchText, setSearchText] = useState("");
+
+  const [searchText, setSearchText] = useState('');
+  const [selected, setSelected] = useState<ExerciseType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
-  const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
 
-  const filteredExercises = exercises.filter((exercise) =>
-    exercise.name.toLowerCase().includes(searchText.toLowerCase())
+  // Filtrado por nombre
+  const filtered = exercises.filter(e =>
+    e.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const showEditModal = (exercise: Exercise) => {
-    setEditingExercise(exercise);
-    setIsEditing(true);
-    setIsModalOpen(true);
-    form.setFieldsValue(exercise);
-  };
-
-  const handleUpdateExercise = async () => {
-    try {
-      const updatedExercise = await form.validateFields();
-      if (editingExercise) {
-        const success = await updateExercise({ ...editingExercise, ...updatedExercise });
-        if (success) {
-          message.success("Ejercicio actualizado correctamente.");
-          closeModal();
-        } else {
-          message.error("Error al actualizar el ejercicio.");
-        }
-      }
-    } catch {
-      message.error("Por favor complete todos los campos requeridos.");
-    }
-  };
-
-  const showModal = () => {
+  // Crear
+  const showCreate = () => {
     setIsEditing(false);
+    form.resetFields();
     setIsModalOpen(true);
-    form.resetFields();
   };
 
-  const handleAddExercise = async () => {
+  // Editar
+  const showEdit = (ex: ExerciseType) => {
+    setIsEditing(true);
+    setSelected(ex);
+    form.setFieldsValue(ex);
+    setIsModalOpen(true);
+  };
+
+  // Guardar
+  const handleOk = async () => {
     try {
-      const newExercise = await form.validateFields();
-      const success = await createExercise(newExercise);  // ← ahora sí capturas el boolean
-      if (success) {
-        message.success("Ejercicio agregado correctamente.");
-        closeModal();
+      const values = await form.validateFields();
+      if (isEditing && selected) {
+        const ok = await updateExercise({ ...selected, ...values });
+        ok ? message.success('Ejercicio actualizado') : message.error('Error al actualizar');
       } else {
-        message.error("Error al agregar el ejercicio.");
+        const ok = await createExercise(values);
+        ok ? message.success('Ejercicio creado') : message.error('Error al crear');
       }
+      setIsModalOpen(false);
+      form.resetFields();
     } catch {
-      message.error("Por favor complete todos los campos requeridos.");
-    }
-  };
-  
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    form.resetFields();
-    setEditingExercise(null);
-  };
-
-  const handleDelete = async (exerciseId: number) => {
-    const success = await deleteExercise(exerciseId);
-    if (success) {
-      message.success("Ejercicio eliminado correctamente.");
-    } else {
-      message.error("No se pudo eliminar el ejercicio.");
+      message.error('Completa todos los campos');
     }
   };
 
-  const exerciseColumns = [
-    { title: "Nombre", dataIndex: "name", key: "name" },
-    { title: "Descripción", dataIndex: "description", key: "description" },
-    { title: "Grupo Muscular", dataIndex: "muscleGroup", key: "muscleGroup" },
-    {
-      title: "Acciones",
-      key: "actions",
-      render: (_: any, record: Exercise) => (
-        <>
-          {state.user?.userType === 1 && (
-            <>
-              <Button type="link" onClick={() => showEditModal(record)}>
-                Editar
-              </Button>
-              <Popconfirm
-                title="¿Estás seguro de eliminar este ejercicio?"
-                onConfirm={() => handleDelete(record.exerciseId)}
-                okText="Sí"
-                cancelText="No"
-              >
-                <Button type="link" danger>
-                  Eliminar
-                </Button>
-              </Popconfirm>
-            </>
-          )}
-        </>
-      ),
-    },
-  ];
+  // Borrar
+  const onDelete = async (id: number) => {
+    const ok = await deleteExercise(id);
+    ok ? message.success('Ejercicio eliminado') : message.error('Error al eliminar');
+  };
+
+  if (loading) return <Spin tip="Cargando ejercicios..." />;
+  if (error)   return <Alert type="error" message={error} />;
 
   return (
-    <div>
-      <Input
-        placeholder="Buscar ejercicio por nombre"
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
-        style={{ width: 300, marginBottom: 20 }}
+    <div style={{ padding: 24, background: '#111' }}>
+      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
+        <Input.Search
+          placeholder="Buscar ejercicio"
+          onChange={e => setSearchText(e.target.value)}
+          style={{ width: 300 }}
+        />
+        {(state.user?.userType === 1 || state.user?.userType === 5) && (
+          <Button type="primary" icon={<PlusOutlined />} onClick={showCreate}>
+            Agregar Ejercicio
+          </Button>
+        )}
+      </div>
+
+      <List
+        grid={{ gutter: 24, xs: 1, sm: 2, md: 3, lg: 4 }}
+        dataSource={filtered}
+        renderItem={ex => {
+          const img = exerciseImages[ex.exercisesId] ?? '/images/default-ex.jpg';
+          return (
+            <List.Item>
+              <Card
+                hoverable
+                cover={
+                  <img
+                    alt={ex.name}
+                    src={img}
+                    style={{ height: 140, objectFit: 'cover' }}
+                  />
+                }
+                actions={
+                  state.user?.userType === 1
+                    ? [
+                        <EditOutlined key="edit" onClick={() => showEdit(ex)} />,
+                        <Popconfirm
+                          key="del"
+                          title="Eliminar este ejercicio?"
+                          onConfirm={() => onDelete(ex.exercisesId)}
+                          okText="Sí"
+                          cancelText="No"
+                        >
+                          <DeleteOutlined />
+                        </Popconfirm>
+                      ]
+                    : []
+                }
+              >
+                <Card.Meta
+                  title={ex.name}
+                  description={ex.muscleGroup}
+                />
+                <Button
+                  type="link"
+                  style={{ marginTop: 8, padding: 0 }}
+                  onClick={() => setSelected(ex)}
+                >
+                  Ver detalles
+                </Button>
+              </Card>
+            </List.Item>
+          );
+        }}
       />
 
-      {(state.user?.userType === 1 || state.user?.userType === 5) && (
-        <Button type="primary" onClick={showModal} style={{ marginBottom: 20 }}>
-          Agregar Ejercicio
-        </Button>
-      )}
-
-      <Table
-        columns={exerciseColumns}
-        dataSource={filteredExercises}
-        rowKey="exerciseId"
-        pagination={{ pageSize: 5 }}
-      />
-
+      {/* Modal Detalles */}
       <Modal
-        title={isEditing ? "Editar Ejercicio" : "Agregar Nuevo Ejercicio"}
-        open={isModalOpen}
-        onOk={isEditing ? handleUpdateExercise : handleAddExercise}
-        onCancel={closeModal}
-        okText={isEditing ? "Actualizar" : "Agregar"}
-        cancelText="Cancelar"
+        visible={!!selected && !isModalOpen}
+        title={selected?.name}
+        footer={null}
+        onCancel={() => setSelected(null)}
+      >
+        <p><strong>Descripción:</strong> {selected?.description}</p>
+        <p><strong>Grupo muscular:</strong> {selected?.muscleGroup}</p>
+      </Modal>
+
+      {/* Modal Crear/Editar */}
+      <Modal
+        visible={isModalOpen}
+        title={isEditing ? 'Editar Ejercicio' : 'Agregar Ejercicio'}
+        onOk={handleOk}
+        onCancel={() => setIsModalOpen(false)}
+        okText={isEditing ? 'Actualizar' : 'Crear'}
       >
         <Form form={form} layout="vertical">
-          <Form.Item
-            name="name"
-            label="Nombre"
-            rules={[{ required: true, message: "Por favor ingrese el nombre del ejercicio" }]}
-          >
+          <Form.Item name="name" label="Nombre" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item
-            name="description"
-            label="Descripción"
-            rules={[{ required: true, message: "Por favor ingrese la descripción" }]}
-          >
+          <Form.Item name="description" label="Descripción" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item
-            name="muscleGroup"
-            label="Grupo Muscular"
-            rules={[{ required: true, message: "Por favor ingrese el grupo muscular" }]}
-          >
+          <Form.Item name="muscleGroup" label="Grupo Muscular" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
         </Form>
@@ -173,4 +186,4 @@ const ExerciseTable = () => {
   );
 };
 
-export default ExerciseTable;
+export default ExercisesScreen;
