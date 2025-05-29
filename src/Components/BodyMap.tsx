@@ -11,112 +11,63 @@ import {
 
 const injuriesData: Record<
   string,
-  { icon: React.ReactNode; title: string; items: string[] }
+  { icon: React.ReactNode; title: string; items: { label: string; videoUrl: string }[] }
 > = {
   head: {
     icon: <EyeOutlined />,
     title: "Cabeza",
-      "items": [
-    "Conmoción cerebral",
-    "Migraña tensional",
-    "Fractura de cráneo",
-    "Hematoma subdural",
-    "Contusión cerebral",
-    "Lesión del cuero cabelludo",
-    "Fractura de huesos faciales (pómulo, mandíbula, nariz)",
-    "Síndrome post-conmocional",
-    "Lesión de la articulación temporomandibular (ATM)",
-    "Latigazo cervical con impacto craneal",
-    "Neuralgia occipital",
-    "Lesión ocular traumática",
-    "Pérdida temporal del conocimiento (desmayo por impacto)",
-    "Hemorragia intracraneal"
+    items: [
+      { label: "Conmoción cerebral", videoUrl: "https://www.youtube.com/watch?v=SbcP1KCeucU" },
+      { label: "Migraña tensional",    videoUrl: "https://www.youtube.com/watch?v=LL177F4DGdM" },
+      { label: "Hematoma subdural",    videoUrl: "https://www.youtube.com/watch?v=12ilgnUdoRE" },
     ],
   },
   shoulder: {
     icon: <AimOutlined />,
     title: "Hombro",
-      "items": [
-    "Tendinitis del manguito rotador",
-    "Luxación de hombro",
-    "Desgarro del manguito rotador",
-    "Bursitis subacromial",
-    "Inestabilidad del hombro",
-    "Síndrome de pinzamiento del hombro",
-    "Fractura de clavícula",
-    "Fractura de húmero proximal",
-    "Lesión del labrum glenoideo (como la SLAP)",
-    "Artritis acromioclavicular postraumática",
-    "Capsulitis adhesiva (hombro congelado)",
-    "Tendinosis bicipital",
-    "Subluxación recurrente de hombro",
-    "Lesión nerviosa del plexo braquial"
+    items: [
+      { label: "Tendinitis del manguito rotador", videoUrl: "https://www.youtube.com/watch?v=YDDN-V4Hk9o" },
+      {label: "Luxación de hombro", videoUrl: "https://www.youtube.com/watch?v=oyyLFM8ZL_Q"},
+      {label: "Bursitis subacromial", videoUrl: "https://www.youtube.com/watch?v=z1Ej_kgX1J0"}
+      // …
     ],
   },
   elbow: {
     icon: <InteractionOutlined />,
     title: "Codo",
-      "items": [
-    "Epicondilitis (codo de tenista)",
-    "Bursitis olecraniana",
-    "Epitrocleitis (codo de golfista)",
-    "Luxación de codo",
-    "Fractura del olécranon",
-    "Fractura de cabeza radial",
-    "Lesión del ligamento colateral cubital",
-    "Tendinitis del tríceps",
-    "Compresión del nervio cubital (síndrome del túnel cubital)",
-    "Artritis traumática del codo",
-    "Osteocondritis disecante del codo",
-    "Síndrome de interposición del plica sinovial",
-    "Rigidez postraumática del codo"
-   ],
+    items: [
+      { label: "Epicondilitis (codo de tenista)", videoUrl: "https://www.youtube.com/watch?v=PNDVzRJh3uQ" },
+      { label: "Bursitis olecraniana", videoUrl: "https://www.youtube.com/watch?v=tTQGoJ-p9Sk"}, 
+      { label: "Fractura del olécranon", videoUrl: "https://www.youtube.com/watch?v=V08jZCXerOw"}
+    ],
   },
   knee: {
     icon: <DotChartOutlined />,
     title: "Rodilla",
-    "items": [
-    "Lesión de menisco",
-    "Rotura del ligamento cruzado anterior (LCA)",
-    "Rotura del ligamento cruzado posterior (LCP)",
-    "Esguince del ligamento colateral medial (LCM)",
-    "Esguince del ligamento colateral lateral (LCL)",
-    "Tendinitis rotuliana (rodilla del saltador)",
-    "Condromalacia rotuliana",
-    "Bursitis prerrotuliana",
-    "Luxación de rótula",
-    "Síndrome de la banda iliotibial",
-    "Fractura de la rótula",
-    "Osteocondritis disecante",
-    "Lesión del cartílago articular",
-    "Quiste de Baker",
-    "Artrosis postraumática de rodilla"
+    items: [
+      { label: "Lesión de menisco", videoUrl: "https://www.youtube.com/watch?v=0EE2XGM3Pps" },
+      { label: "Rotura del ligamento cruzado anterior (LCA)", videoUrl: "https://www.youtube.com/watch?v=IkJLoTlC8ds"},
+      { label: "Condromalacia rotuliana", videoUrl: "https://www.youtube.com/watch?v=uUTxH8vdimA"}
     ],
   },
   ankle: {
     icon: <HeartOutlined />,
     title: "Tobillo",
-      "items": [
-    "Esguince de tobillo",
-    "Tendinitis aquílea",
-    "Rotura del tendón de Aquiles",
-    "Fractura de maléolo (medial, lateral o posterior)",
-    "Luxación de tobillo",
-    "Síndrome del seno del tarso",
-    "Lesión osteocondral del astrágalo",
-    "Inestabilidad crónica de tobillo",
-    "Bursitis retrocalcánea",
-    "Periostitis tibial (shin splints que irradian al tobillo)",
-    "Tendinopatía de los peroneos",
-    "Compresión del nervio tibial posterior (síndrome del túnel tarsiano)",
-    "Artritis postraumática de tobillo",
-    "Impigement anterior o posterior del tobillo"
+    items: [
+      { label: "Esguince de tobillo", videoUrl: "https://www.youtube.com/watch?v=xfKjFtES5fk" },
+      { label: "Luxación de tobillo", videoUrl: "https://www.youtube.com/watch?v=R1To9_KF1e8"},
+      { label: "Síndrome del seno del tarso", videoUrl: "https://www.youtube.com/watch?v=-KKZ10WBqNw"}
     ],
   },
 };
 
 export const BodyMapDynamic = () => {
   const [zone, setZone] = useState<string | null>(null);
+
+  // ← ¡Aquí está la función que faltaba!
+  const handleItemClick = (url: string) => {
+    window.open(url, "_blank", "noopener");
+  };
 
   return (
     <div
@@ -127,21 +78,21 @@ export const BodyMapDynamic = () => {
         textAlign: "center",
       }}
     >
+      {/* Imagen centrándola */}
       <img
         src="/anatomy.png"
         alt="Anatomía"
-        style={{ width: "100%", display: "block" }}
+        style={{ width: "100%", display: "block", margin: "0 auto" }}
       />
 
       {/* Áreas invisibles clicables */}
       {Object.keys(injuriesData).map((key) => {
-        // define posiciones y tamaños por zona
         const pos = {
-          head: { top: "2%", left: "47%", w: 40, h: 40 },
+          head:     { top: "2%",  left: "47%", w: 40, h: 40 },
           shoulder: { top: "16%", left: "26%", w: 60, h: 40 },
-          elbow: { top: "30%", left: "64%", w: 50, h: 40 },
-          knee: { top: "68%", left: "35%", w: 70, h: 50 },
-          ankle: { top: "90%", left: "52%", w: 70, h: 50 },
+          elbow:    { top: "30%", left: "64%", w: 50, h: 40 },
+          knee:     { top: "68%", left: "35%", w: 70, h: 50 },
+          ankle:    { top: "90%", left: "52%", w: 70, h: 50 },
         } as any;
 
         return (
@@ -166,16 +117,16 @@ export const BodyMapDynamic = () => {
       {/* Drawer de Antd */}
       <Drawer
         title={
-          zone
-            ? (
-              <span>
-                {injuriesData[zone].icon}{" "}
-                <Typography.Title level={4} style={{ display: "inline" }}>
-                  {injuriesData[zone].title}
-                </Typography.Title>
-              </span>
-            )
-            : ""
+          zone ? (
+            <span>
+              {injuriesData[zone].icon}{" "}
+              <Typography.Title level={4} style={{ display: "inline" }}>
+                {injuriesData[zone].title}
+              </Typography.Title>
+            </span>
+          ) : (
+            ""
+          )
         }
         placement="right"
         onClose={() => setZone(null)}
@@ -192,7 +143,14 @@ export const BodyMapDynamic = () => {
             >
               <List
                 dataSource={injuriesData[zone].items}
-                renderItem={(item) => <List.Item>{item}</List.Item>}
+                renderItem={(item) => (
+                  <List.Item
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleItemClick(item.videoUrl)}
+                  >
+                    {item.label}
+                  </List.Item>
+                )}
               />
             </motion.div>
           )}
