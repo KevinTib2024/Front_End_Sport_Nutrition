@@ -128,7 +128,7 @@ export const BodyMapDynamic = () => {
       }}
     >
       <img
-        src="/src/assets/anatomy.png"
+        src="/anatomy.png"
         alt="Anatomía"
         style={{ width: "100%", display: "block" }}
       />
