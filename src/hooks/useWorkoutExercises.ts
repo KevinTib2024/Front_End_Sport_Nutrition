@@ -24,8 +24,8 @@ const useWorkoutExercises = () => {
       setWorkoutExercises(data);
       setError(null);
     } catch (err: any) {
-      console.error("Error al obtener los ejercicios:", err);
-      setError("Error al obtener los ejercicios");
+      console.error("Error al obtener los ejercicios de rutinas:", err);
+      setError("Error al obtener los ejercicios de rutinas");
     } finally {
       setLoading(false);
     }
@@ -38,7 +38,8 @@ const useWorkoutExercises = () => {
         await fetchWorkoutExercises();
         return true;
       } catch (err: any) {
-        console.error("Error al crear el ejercicio:", err);
+        console.error("Error al crear ejercicio en rutina:", err);
+        setError("Error al crear ejercicio en rutina");
         return false;
       }
     },
@@ -47,16 +48,14 @@ const useWorkoutExercises = () => {
 
   const updateWorkoutExercise = useCallback(
     async (payload: WorkoutExercise): Promise<boolean> => {
-      if (!payload.workoutExercisesId) {
-        console.error("El ID del ejercicio es requerido para actualizar.");
-        return false;
-      }
+      if (!payload.workoutExercisesId) return false;
       try {
         await axios.put(`${API_URL}/${payload.workoutExercisesId}`, payload);
         await fetchWorkoutExercises();
         return true;
       } catch (err: any) {
-        console.error("Error al actualizar el ejercicio:", err);
+        console.error("Error al actualizar ejercicio en rutina:", err);
+        setError("Error al actualizar ejercicio en rutina");
         return false;
       }
     },
@@ -70,7 +69,8 @@ const useWorkoutExercises = () => {
         await fetchWorkoutExercises();
         return true;
       } catch (err: any) {
-        console.error("Error al eliminar el ejercicio:", err);
+        console.error("Error al eliminar ejercicio de rutina:", err);
+        setError("Error al eliminar ejercicio de rutina");
         return false;
       }
     },
@@ -85,7 +85,6 @@ const useWorkoutExercises = () => {
     workoutExercises,
     loading,
     error,
-    fetchWorkoutExercises,
     createWorkoutExercise,
     updateWorkoutExercise,
     deleteWorkoutExercise,

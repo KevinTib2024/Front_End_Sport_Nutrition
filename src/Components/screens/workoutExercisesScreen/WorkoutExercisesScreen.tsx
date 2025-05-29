@@ -1,25 +1,31 @@
-import React, { useState, useEffect } from "react";
+// src/screens/WorkoutExercisesScreen.tsx
+import React, { useState } from "react";
 import {
-  Table,
-  Input,
+  List,
+  Card,
   Button,
-  Popconfirm,
-  Modal,
-  Form,
-  InputNumber,
-  message,
   Spin,
   Alert,
+  Modal,
+  Form,
+  //Select,
+  InputNumber,
+  Popconfirm,
+  message,
 } from "antd";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import useWorkoutExercises, { WorkoutExercise } from "../../../hooks/useWorkoutExercises";
+import useExercises from "../../../hooks/useExercises";
+import { exerciseImages } from "../../../utils/exerciseImages";
 import { useAuth } from "../../../Context/AuthContext";
-import axios from "axios";
 
-// Interfaces para rutinas y ejercicios con nombre
-interface Workout { workoutId: number; name: string; }
-interface Exercise { exercisesId: number; name: string; }
+//const { Option } = Select;
 
-const WorkoutExercisesTable: React.FC = () => {
+const WorkoutExercisesScreen: React.FC = () => {
   const {
     workoutExercises,
     loading,
@@ -28,49 +34,25 @@ const WorkoutExercisesTable: React.FC = () => {
     updateWorkoutExercise,
     deleteWorkoutExercise,
   } = useWorkoutExercises();
+
+  const { exercises } = useExercises();  // Asegúrate de que aquí el tipo realmente exporta `exercisesId`
   const { state } = useAuth();
 
-  // Datos maestros
-  const [workouts, setWorkouts] = useState<Workout[]>([]);
-  const [exercises, setExercises] = useState<Exercise[]>([]);
-
-  // Cargar nombres de rutinas y ejercicios
-  useEffect(() => {
-    (async () => {
-      try {
-        const [wRes, eRes] = await Promise.all([
-          axios.get<Workout[]>("https://sportnutrition.somee.com/api/Workout"),
-          axios.get<Exercise[]>("https://sportnutrition.somee.com/api/Exercises"),
-        ]);
-        setWorkouts(wRes.data);
-        setExercises(eRes.data);
-      } catch (err: any) {
-        console.error("Error cargando rutinas o ejercicios:", err);
-        message.error("Error cargando datos de rutinas y ejercicios");
-      }
-    })();
-  }, []);
-
-  // Estados y formularios
-  const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [form] = Form.useForm<WorkoutExercise>();
   const [editingItem, setEditingItem] = useState<WorkoutExercise | null>(null);
+  const [form] = Form.useForm<WorkoutExercise>();
 
-  // Filtrado básico
-  const filtered = workoutExercises.filter((we) =>
-    `${we.workout_Id}-${we.exercises_Id}`.includes(searchText.trim())
-  );
+  const canEdit = [1, 5].includes(state.user?.userType ?? 0);
 
   // Modales
-  const showModal = () => {
+  const showCreate = () => {
     setIsEditing(false);
     setEditingItem(null);
     form.resetFields();
     setIsModalOpen(true);
   };
-  const showEditModal = (item: WorkoutExercise) => {
+  const showEdit = (item: WorkoutExercise) => {
     setIsEditing(true);
     setEditingItem(item);
     form.setFieldsValue(item);
@@ -82,128 +64,131 @@ const WorkoutExercisesTable: React.FC = () => {
     form.resetFields();
   };
 
-  // Crear o actualizar
-  const handleSubmit = async () => {
+  // Submit
+  const handleOk = async () => {
     try {
       const values = await form.validateFields();
       const success = isEditing && editingItem
         ? await updateWorkoutExercise({ ...editingItem, ...values })
         : await createWorkoutExercise(values as Omit<WorkoutExercise, "workoutExercisesId">);
+
       if (success) {
-        message.success(isEditing ? "Ejercicio actualizado." : "Ejercicio agregado.");
+        message.success(isEditing ? "Actualizado" : "Agregado");
         closeModal();
       } else {
-        message.error(isEditing ? "Error al actualizar." : "Error al agregar.");
+        message.error(isEditing ? "Error al actualizar" : "Error al agregar");
       }
     } catch {
-      message.error("Por favor completa todos los campos.");
+      message.error("Completa todos los campos");
     }
   };
 
-  // Eliminar
-  const handleDelete = async (id: number) => {
-    const success = await deleteWorkoutExercise(id);
-    if (success) message.success("Ejercicio eliminado.");
-    else message.error("No se pudo eliminar.");
+  // Delete
+  const onDelete = async (id: number) => {
+    const ok = await deleteWorkoutExercise(id);
+    ok ? message.success("Eliminado") : message.error("Error al eliminar");
   };
 
-  const canEdit = [1, 5].includes(state.user?.userType ?? 0);
-
-  // Columnas con nombres en lugar de IDs
-  const columns = [
-    {
-      title: "Rutina",
-      key: "workoutName",
-      render: (_: any, record: WorkoutExercise) => {
-        const w = workouts.find((w) => w.workoutId === record.workout_Id);
-        return w?.name ?? record.workout_Id;
-      },
-    },
-    {
-      title: "Ejercicio",
-      key: "exerciseName",
-      render: (_: any, record: WorkoutExercise) => {
-        const e = exercises.find((e) => e.exercisesId === record.exercises_Id);
-        return e?.name ?? record.exercises_Id;
-      },
-    },
-    { title: "Series", dataIndex: "sets", key: "sets" },
-    { title: "Repeticiones", dataIndex: "reps", key: "reps" },
-    { title: "Descanso (s)", dataIndex: "restSeconds", key: "restSeconds" },
-    {
-      title: "Acciones",
-      key: "actions",
-      render: (_: any, record: WorkoutExercise) =>
-        canEdit && record.workoutExercisesId! > 0 && (
-          <>
-            <Button type="link" onClick={() => showEditModal(record)}>
-              Editar
-            </Button>
-            <Popconfirm
-              title="¿Eliminar este ejercicio?"
-              onConfirm={() => handleDelete(record.workoutExercisesId!)}
-              okText="Sí"
-              cancelText="No"
-            >
-              <Button type="link" danger>
-                Eliminar
-              </Button>
-            </Popconfirm>
-          </>
-        ),
-    },
-  ];
+  if (loading) return <Spin tip="Cargando ejercicios de rutina..." />;
+  if (error) return <Alert type="error" message={error} style={{ marginBottom: 16 }} />;
 
   return (
-    <div>
-      <Input.Search
-        placeholder="Buscar Workout‑Exercise"
-        onSearch={setSearchText}
-        style={{ width: 300, marginBottom: 16 }}
-        allowClear
-      />
-
+    <div style={{ padding: 24, background: "#111" }}>
       {canEdit && (
-        <Button type="primary" onClick={showModal} style={{ marginBottom: 16 }}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          style={{ marginBottom: 16 }}
+          onClick={showCreate}
+        >
           Agregar Ejercicio a Rutina
         </Button>
       )}
 
-      {error && <Alert type="error" message={error} style={{ marginBottom: 16 }} />}
-      {loading ? (
-        <Spin />
-      ) : (
-        <Table
-          columns={columns}
-          dataSource={filtered}
-          rowKey="workoutExercisesId"
-          pagination={{ pageSize: 5 }}
-        />
-      )}
+      <List
+        grid={{ gutter: [32, 32], xs: 1, sm: 2, md: 3, lg: 4 }}
+        dataSource={workoutExercises}
+        renderItem={we => {
+          // Ajuste: si ExerciseType usa `exercisesId`
+          const ex = exercises.find(e => e.exercisesId === we.exercises_Id);
+          const img = ex
+            ? exerciseImages[ex.exercisesId] ?? "/images/default-ex.jpg"
+            : "/images/default-ex.jpg";
+
+          return (
+            <List.Item>
+              <Card
+                hoverable
+                cover={
+                  <img
+                    alt={ex?.name ?? ""}
+                    src={img}
+                    style={{ height: 140, objectFit: "cover" }}
+                  />
+                }
+                actions={
+                  canEdit && we.workoutExercisesId
+                    ? [
+                        <EditOutlined key="edit" onClick={() => showEdit(we)} />,
+                        <Popconfirm
+                          key="del"
+                          title="Eliminar este ejercicio?"
+                          onConfirm={() => onDelete(we.workoutExercisesId!)}
+                          okText="Sí"
+                          cancelText="No"
+                        >
+                          <DeleteOutlined />
+                        </Popconfirm>,
+                      ]
+                    : []
+                }
+              >
+                <Card.Meta
+                  title={ex?.name ?? `Ejercicio ${we.exercises_Id}`}
+                  description={`Series: ${we.sets} · Reps: ${we.reps}`}
+                />
+                <p style={{ marginTop: 8 }}>Descanso: {we.restSeconds}s</p>
+              </Card>
+            </List.Item>
+          );
+        }}
+      />
 
       <Modal
         title={isEditing ? "Editar Ejercicio en Rutina" : "Agregar Ejercicio a Rutina"}
         open={isModalOpen}
-        onOk={handleSubmit}
+        onOk={handleOk}
         onCancel={closeModal}
-        okText={isEditing ? "Actualizar" : "Agregar"}
+        okText={isEditing ? "Actualizar" : "Crear"}
         cancelText="Cancelar"
       >
         <Form form={form} layout="vertical">
           <Form.Item
             name="workout_Id"
-            label="Rutina"
+            label="Workout ID"
             rules={[{ required: true, message: "Obligatorio" }]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
+
           <Form.Item
             name="exercises_Id"
-            label="Ejercicio"
+            label="Exercise ID"
             rules={[{ required: true, message: "Obligatorio" }]}
           >
             <InputNumber style={{ width: "100%" }} />
+            {/*
+            // Si prefieres Select con los nombres:
+            <Select placeholder="Selecciona ejercicio">
+              {exercises.map(e => (
+                <Option key={e.exercisesId} value={e.exercisesId}>
+                  {e.name}
+                </Option>
+              ))}
+            </Select>
+            */}
           </Form.Item>
+
           <Form.Item
             name="sets"
             label="Series"
@@ -211,6 +196,7 @@ const WorkoutExercisesTable: React.FC = () => {
           >
             <InputNumber min={1} style={{ width: "100%" }} />
           </Form.Item>
+
           <Form.Item
             name="reps"
             label="Repeticiones"
@@ -218,6 +204,7 @@ const WorkoutExercisesTable: React.FC = () => {
           >
             <InputNumber min={1} style={{ width: "100%" }} />
           </Form.Item>
+
           <Form.Item
             name="restSeconds"
             label="Descanso (s)"
@@ -231,4 +218,4 @@ const WorkoutExercisesTable: React.FC = () => {
   );
 };
 
-export default WorkoutExercisesTable;
+export default WorkoutExercisesScreen;
